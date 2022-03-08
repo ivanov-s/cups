@@ -1,0 +1,7 @@
+__pycache__
+setting.json
+*.pyc
+.vscode
+.code
+.pycharm
+venv

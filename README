@@ -1,0 +1,7 @@
+Управление сервисов cups.
+
+Примечание:
+
+Для работы добавить в директорию /etc/sudoers.d/ файл cups с содержимым
+USER_NAME ALL=(root) NOPASSWD: /bin/systemctl start cups.service, /bin/systemctl stop cups.service, /bin/systemctl restart cups.service, /bin/systemctl reload cups.service, /bin/systemctl status cups.service
+заменив предварительно USER_NAME на пользователя от которого зупускается программа.

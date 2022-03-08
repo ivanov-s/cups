@@ -1,0 +1,113 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo</title>
+  <meta name="description" content="Demo">
+  <meta name="author" content="Sergey Ivanov">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        Сервис: 
+        <span v-if="status">Сервис работает</span >
+        <span v-else>Сервис остановлен</span>
+        <br>
+        Управление:
+        <button :disabled='!flag' @click="set_command('start')">Запустить</button>
+        <button :disabled='!flag' @click="set_command('restart')">Перезапустить</button>
+        <button :disabled='!flag' @click="set_command('stop')">Остановить</button>
+        <br>
+        Доступ к управлению:
+        <input type="checkbox" v-model="flag" @click="save_setting">
+    </div>
+  <!-- your content here... -->
+  <script>
+    var app = new Vue({
+    el: '#app',
+    data() {
+        return {
+            status: false,
+            isWaiting: false,
+            flag: true,
+        }
+    },
+    methods: {
+        async load_status() {
+            try {
+                const response = await axios.get(
+                    "http://localhost:8080/getStatus"
+                );
+                this.status = response.data.status;
+            } catch (error) {
+                console.log('error', error);
+            } finally {
+                console.log('finally');
+            }
+        },
+        async set_command(command) {
+            console.log('log2');
+            try {
+                const response = await axios.post(
+                    "http://localhost:8080/setStatus",
+                    {
+                        'command': command
+                    }
+                );
+                this.status = response.data.status;
+            } catch (error) {
+                console.log('error', error);
+
+            } finally {
+                console.log('finally');
+            }
+        },
+        async save_setting() {
+            try {
+                const response = await axios.post(
+                    "http://localhost:8080/save_setting",
+                    {
+                        'flag': this.flag
+                    }
+                );
+            } catch (error) {
+                console.log('error', error);
+
+            } finally {
+                console.log('finally');
+            }
+        },
+        async load_setting() {
+            try {
+                const response = await axios.get(
+                    "http://localhost:8080/load_setting"
+                );
+                this.flag = response.data.flag;
+                console.log(response.data.flag);
+            } catch (error) {
+                console.log('error', error);
+
+            } finally {
+                console.log('finally');
+            }
+        },
+    },
+    created: function () {
+        this.load_status();
+        this.load_setting();
+    },
+    watch: {
+        flag: function()
+        {
+            this.save_setting();
+        }
+    }
+
+    });
+  </script>
+</body>
+</html>
